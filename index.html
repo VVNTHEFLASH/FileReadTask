@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Filter Text File</title>
+<style>
+    .red-background {
+        background-color: red;
+    }
+</style>
+</head>
+<body>
+
+<h2>Select a text file:</h2>
+<input type="file" id="fileInput" accept=".txt">
+<button onclick="filterFile()">Filter</button>
+
+<div id="output"></div>
+
+<script>
+function filterFile() {
+    const file = document.getElementById('fileInput').files[0];
+    const reader = new FileReader();
+
+    reader.onload = function(event) {
+        const fileContent = event.target.result;
+        const lines = fileContent.split('\n');
+
+        // Display filtered lines
+        document.getElementById('output').innerHTML = "<h2>Filtered Lines:</h2>";
+        lines.forEach(line => {
+            // Skip lines containing "commit", "Author", and "Date"
+            if (!/^(commit|Author|Date|Merge:)\b/i.test(line)) {
+                // Create a div element for each line
+                const lineDiv = document.createElement('div');
+                // Set the text content of the div to the line
+                lineDiv.textContent = line;
+                // If the line does not contain [idnumber], add a class to give it a red background
+                if (!/\[\d+\]/.test(line)) {
+                    lineDiv.classList.add('red-background');
+                }
+                // Append the div to the output container
+                document.getElementById('output').appendChild(lineDiv);
+            }
+        });
+    };
+
+    reader.readAsText(file);
+}
+</script>
+
+</body>
+</html>
