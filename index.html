@@ -15,6 +15,7 @@
 <h2>Select a text file:</h2>
 <input type="file" id="fileInput" accept=".txt">
 <button onclick="filterFile()">Filter</button>
+<div id="count"></div>
 
 <div id="output"></div>
 
@@ -27,11 +28,16 @@ function filterFile() {
         const fileContent = event.target.result;
         const lines = fileContent.split('\n');
 
+        // Initialize count variables
+        let totalCount = lines.length;
+        let validCount = 0;
+        let invalidCount = 0;
+
         // Display filtered lines
         document.getElementById('output').innerHTML = "<h2>Filtered Lines:</h2>";
         lines.forEach(line => {
             // Skip lines containing "commit", "Author", and "Date"
-            if (!/^(commit|Author|Date|Merge:)\b/i.test(line)) {
+            if (!/^\s*(Merge|Author|Date):/i.test(line)) {
                 // Create a div element for each line
                 const lineDiv = document.createElement('div');
                 // Set the text content of the div to the line
@@ -39,11 +45,20 @@ function filterFile() {
                 // If the line does not contain [idnumber], add a class to give it a red background
                 if (!/\[\d+\]/.test(line)) {
                     lineDiv.classList.add('red-background');
+                    invalidCount++;
+                } else {
+                    validCount++;
                 }
                 // Append the div to the output container
                 document.getElementById('output').appendChild(lineDiv);
             }
         });
+
+        // Display count
+        document.getElementById('count').innerHTML = "<h2>Count:</h2>" +
+                                                        "<p>Total Lines: " + totalCount + "</p>" +
+                                                        "<p>Valid Commits: " + validCount + "</p>" +
+                                                        "<p>Invalid Commits: " + invalidCount + "</p>";
     };
 
     reader.readAsText(file);
